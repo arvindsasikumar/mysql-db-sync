@@ -5,6 +5,8 @@
  */
 package sync.db.mysql;
 
+import java.sql.*;
+
 /**
  * 
  * @author Arvind Sasikumar
@@ -15,25 +17,45 @@ public class DBSyncAgent {
     private final String serverDatabaseName;
     private final String serverDatabaseUsername;
     private final String serverDatabasePassword;
+    private final String serverDatabaseConnectionOptions;
+    private final int serverDatabasePort;
     
     private final String clientDatabaseAddress;
     private final String clientDatabaseName;
     private final String clientDatabaseUsername;
     private final String clientDatabasePassword;
+    private final String clientDatabaseConnectionOptions;
+    private final int clientDatabasePort;
+    
+    private final DBMap dbMap;
     
     private final int syncInterval;
     
-    public class Builder{
+    private Connection serverConnection;
+    private Connection clientConnection;
+    
+    private Statement serverStatement;
+    private Statement clientStatement;
+    
+    private DBSynchronizer dbSynchronizer;
+    
+    public static class Builder{
         
         private String serverDatabaseAddress;
         private String serverDatabaseName;
         private String serverDatabaseUsername;
         private String serverDatabasePassword;
+        private String serverDatabaseConnectionOptions;
+        private int serverDatabasePort;
         
         private String clientDatabaseAddress;
         private String clientDatabaseName;
         private String clientDatabaseUsername;
         private String clientDatabasePassword;
+        private String clientDatabaseConnectionOptions;
+        private int clientDatabasePort;
+        
+        private DBMap dbMap;
         
         private int syncInterval;
         
@@ -61,6 +83,18 @@ public class DBSyncAgent {
             return this;
         }
         
+        public Builder setServerDatabaseConnectionOptions(String serverDatabaseConnectionOptions){
+            
+            this.serverDatabaseConnectionOptions = serverDatabaseConnectionOptions;
+            return this;
+        }
+        
+        public Builder setServerDatabasePort(int serverDatabasePort){
+            
+            this.serverDatabasePort = serverDatabasePort;
+            return this;
+        }
+        
         public Builder setClientDatabaseAddress(String clientDatabaseAddress){
             
             this.clientDatabaseAddress = clientDatabaseAddress;
@@ -85,6 +119,24 @@ public class DBSyncAgent {
             return this;
         }
         
+        public Builder setClientDatabaseConnectionOptions(String clientDatabaseConnectionOptions){
+            
+            this.clientDatabaseConnectionOptions = clientDatabaseConnectionOptions;
+            return this;
+        }
+        
+        public Builder setClientDatabasePort(int clientDatabasePort){
+            
+            this.clientDatabasePort = clientDatabasePort;
+            return this;
+        }
+        
+        public Builder setDBMap(DBMap dbMap){
+            
+            this.dbMap = dbMap;
+            return this;
+        }
+        
         public Builder setSyncInterval(int syncInterval){
             
             this.syncInterval = syncInterval;
@@ -103,20 +155,62 @@ public class DBSyncAgent {
         serverDatabaseName = builder.serverDatabaseName;
         serverDatabaseUsername = builder.serverDatabaseUsername;
         serverDatabasePassword = builder.serverDatabasePassword;
+        serverDatabaseConnectionOptions = builder.serverDatabaseConnectionOptions;
+        serverDatabasePort = builder.serverDatabasePort;
         
         clientDatabaseAddress = builder.clientDatabaseAddress;
         clientDatabaseName = builder.clientDatabaseName;
         clientDatabaseUsername = builder.clientDatabaseUsername;
         clientDatabasePassword = builder.clientDatabasePassword;
+        clientDatabaseConnectionOptions = builder.clientDatabaseConnectionOptions;
+        clientDatabasePort = builder.clientDatabasePort;
+        
+        dbMap = builder.dbMap;
         
         syncInterval = builder.syncInterval;
     }
     
+    public void connect(){
+        
+        try{
+            
+            Class.forName("com.mysql.jdbc.Driver");
+            
+            String connectionString = "jdbc:mysql://" + serverDatabaseAddress + ":" +
+                                      serverDatabasePort + "/" + serverDatabaseName +
+                                      serverDatabaseConnectionOptions;
+            serverConnection = DriverManager.getConnection(connectionString,serverDatabaseUsername,serverDatabasePassword);
+            serverStatement = serverConnection.createStatement();
+            
+            connectionString = "jdbc:mysql://" + clientDatabaseAddress + ":" +
+                               clientDatabasePort + "/" + clientDatabaseName +
+                               clientDatabaseConnectionOptions;
+            clientConnection = DriverManager.getConnection(connectionString,clientDatabaseUsername,clientDatabasePassword);
+            clientStatement = clientConnection.createStatement();
+        }
+        
+        catch(Exception e){
+            
+            e.printStackTrace();
+        }         
+    }
+    
     public void sync(){
         
+        dbSynchronizer = new DBSynchronizer(serverStatement, clientStatement, dbMap);
+        Thread dbSynchronizerThread = new Thread(dbSynchronizer);
+        dbSynchronizerThread.start();
     }
     
     public void liveSync(){
+        
+        dbSynchronizer = new DBSynchronizer(serverStatement, clientStatement, dbMap, syncInterval);
+        Thread dbSynchronizerThread = new Thread(dbSynchronizer);
+        dbSynchronizerThread.start();
+    }
     
+    public void stopSync(){
+        
+        dbSynchronizer.stopSync();
     }
 }

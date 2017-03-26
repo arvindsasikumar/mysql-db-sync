@@ -29,7 +29,7 @@ public class DBSyncAgent {
     
     private final DBMap dbMap;
     
-    private final int syncInterval;
+    private int syncInterval;
     
     private Connection serverConnection;
     private Connection clientConnection;
@@ -168,6 +168,11 @@ public class DBSyncAgent {
         dbMap = builder.dbMap;
         
         syncInterval = builder.syncInterval;
+    }
+    
+    public void setSyncInterval(int syncInterval){
+        
+        this.syncInterval = syncInterval;
     }
     
     public void connect(){

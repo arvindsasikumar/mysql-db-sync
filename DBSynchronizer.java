@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.lang.Exception;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -179,13 +180,18 @@ public class DBSynchronizer implements Runnable{
         }
     }
     
-    private void liveSync(){
+    private void liveSync() {
         
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        final ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                sync();
+                if(isRunning){
+                    sync();
+                }
+                else{
+                    exec.shutdown();
+                }
             }
         },syncInterval, syncInterval, TimeUnit.SECONDS);
     }

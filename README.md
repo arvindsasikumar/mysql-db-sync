@@ -9,6 +9,7 @@ Example Code:
 
 ```java
 import sync.db.mysql.*; //Import the MySQLDBSync.jar file into your project's lib folder first.
+import java.util.Scanner;
 
 public class Test{
 
@@ -48,9 +49,11 @@ public class Test{
     dbSyncAgent.connect(); //Establish connection to server and client databases.
     dbSyncAgent.sync(); //Call this when synchronizing for first time, even if live synchronization is required. If the latter is the case, call the method for live synchronization immediately after this.
     dbSyncAgent.liveSync(); //Activates live sync. Make sure syncInterval() method has been used or the sync interval property was set while building the DBSyncObject. So not use this method if the client server has been idle for a while or is starting for the first time, especially if the server receives a lot of entires within this period. In this case, call the sync() function method, followed by this method.
+    
     System.out.println("Enter a command:");
     Scanner scanner = new Scanner(System.in);
     String s = scanner.next(); //The synchronization happens in a new Thread. This main thread is free to receive commands. Use your standard input to enter the command 'end' to end the synchronization. This will end all synchronization activities safely.
+    
     if(s.equals("end"){
       dbAgent.stopSync(); //Call this method to stop the synchronization safely.
       dbAgent.disconnect(); //Call this method after the stopSync() method has been called. Do not call this method without calling the stopSync() method.

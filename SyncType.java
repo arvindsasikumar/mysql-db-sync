@@ -25,7 +25,10 @@
 package sync.db.mysql;
 
 /**
- *
+ * Enum class that defines the types of Synchronization available.
+ * <p>
+ * <b>SYNC</b> type refers to one-off synchronization.
+ * <b>LIVE_SYNC</b> type refers to live synchronization.
  * @author Arvind Sasikumar
  */
 public enum SyncType {

@@ -49,7 +49,11 @@ public class TableMap {
      * serve as timestamp values that are used for the synchronization. The 
      * names of these attributes in the source and the destination tables are 
      * specified by the parameters sourceTimestampAttribute and 
-     * destinationTimestampAttribute respectively.
+     * destinationTimestampAttribute respectively.<p>
+     * If only some records corresponding to a user in a table of the server 
+     * database has to be synchronized, create a view comprising of only 
+     * these values from the parent table first in the server database and 
+     * use these view names as server database names.
      * @param sourceTable name of the table in the source table
      * @param destinationTable name of the table in the destination table
      * @param sourceTimestampAttribute name of the timestamp attribute in the 

@@ -25,7 +25,12 @@
 package sync.db.mysql;
 
 /**
- *
+ * Enum class that defines the type of attribute being mapped between two tables.
+ * <p>
+ * <b>STRING</b> type refers to all attributes that require them to be 
+ * surrounded with a '' or "" in a MySQL insert statement.
+ * <b>NUMERICAL</b> type refers to all attributes that do not require them to 
+ * be surrounded with a '' or "" in a MySQL insert statement.
  * @author Arvind Sasikumar
  */
 public enum AttributeType {

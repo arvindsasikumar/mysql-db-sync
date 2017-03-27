@@ -49,6 +49,8 @@ public class DBSynchronizer implements Runnable{
     private final SyncType syncType;
     
     private volatile boolean isRunning;
+   
+    private final ScheduledExecutorService exec;
     
     public DBSynchronizer(Statement serverStatement, Statement clientStatement, DBMap dbMap){
         
@@ -61,6 +63,8 @@ public class DBSynchronizer implements Runnable{
         syncType = SyncType.SYNC;
         
         isRunning = true;
+        
+        exec = null;
     }
     
     public DBSynchronizer(Statement serverStatement, Statement clientStatement, DBMap dbMap, int syncInterval){
@@ -74,6 +78,8 @@ public class DBSynchronizer implements Runnable{
         syncType = SyncType.LIVE_SYNC;
         
         isRunning = true;
+        
+        exec = Executors.newSingleThreadScheduledExecutor();
     }
     
     public void run(){
@@ -89,14 +95,22 @@ public class DBSynchronizer implements Runnable{
         }
     }
     
-    private String getLastSyncTimestamp(String destinationTable, String destinationTimestampAttribute){
+    /**
+     * Gets the last synchronized timestamp value.
+     * @param destinationTable destination table name
+     * @param destinationTimestampAttribute destination timestamp attribute name
+     * @return last synchronization timestamp, '0000-00-00 00:00:00' if first time
+     */
+    private String getLastSyncTimestamp(String destinationTable, 
+                                        String destinationTimestampAttribute){
         
         String lastSyncTimestamp = null;
         
         try {
             
-            ResultSet rs = clientStatement.executeQuery("Select max(" + destinationTimestampAttribute +
-                                                        ") from " + destinationTable);
+            ResultSet rs = clientStatement.executeQuery("Select max(" + 
+                                                destinationTimestampAttribute + 
+                                                ") from " + destinationTable);
             
             while(rs.next()){
                 
@@ -117,7 +131,7 @@ public class DBSynchronizer implements Runnable{
         return lastSyncTimestamp;
     }
     
-    public String generateSelectQuery(String table, ArrayList<AttributeMap> attributeMap,
+    private String generateSelectQuery(String table, ArrayList<AttributeMap> attributeMap,
                                       String timestampAttribute, String lastSyncTimestamp){
         
         StringBuilder selectQuery = new StringBuilder("select ");
@@ -136,7 +150,7 @@ public class DBSynchronizer implements Runnable{
         return selectQuery.toString();
     }
     
-    public String generateUpdateQuery(ResultSet rs, String table, ArrayList<AttributeMap> attributeMap) throws SQLException{
+    private String generateUpdateQuery(ResultSet rs, String table, ArrayList<AttributeMap> attributeMap) throws SQLException{
         
         StringBuilder updateQuery = new StringBuilder("insert into  ").append(table).append("(");
         for(int i = 0; i < attributeMap.size(); i++){
@@ -201,16 +215,10 @@ public class DBSynchronizer implements Runnable{
     
     private void liveSync() {
         
-        final ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                if(isRunning){
-                    sync();
-                }
-                else{
-                    exec.shutdown();
-                }
+                sync();
             }
         },syncInterval, syncInterval, TimeUnit.SECONDS);
     }
@@ -218,5 +226,6 @@ public class DBSynchronizer implements Runnable{
     protected void stopSync(){
         
         isRunning = false;
+        exec.shutdown();
     }
 }

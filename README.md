@@ -8,10 +8,14 @@ This library uses 'timestamps' occuring in both the server and the client databa
 Example Code:
 
 ```java
-import sync.db.mysql.*; //Import the MySQLDBSync.jar file into your project's lib folder
+import sync.db.mysql.*; //Import the MySQLDBSync.jar file into your project's lib folder first
 
 public class Test{
+
   public static void main(String args[]){
+  
+    DBMap dbMap = new DBMap(); //Creates a new DBMap object. The DBMap objects lets you create a mapping between source and destination MySQL Server database names, table names and attribute names
+    
   }
 }
 ```

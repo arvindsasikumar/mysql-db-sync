@@ -8,14 +8,16 @@ This library uses 'timestamps' occuring in both the server and the client databa
 Example Code:
 
 ```java
-import sync.db.mysql.*; //Import the MySQLDBSync.jar file into your project's lib folder first
+import sync.db.mysql.*; //Import the MySQLDBSync.jar file into your project's lib folder first.
 
 public class Test{
 
   public static void main(String args[]){
   
-    DBMap dbMap = new DBMap(); //Creates a new DBMap object. The DBMap objects lets you create a mapping between source and destination MySQL Server database names, table names and attribute names
-    
+    DBMap dbMap = new DBMap(); //Creates a new DBMap object. The DBMap objects lets you create a mapping between source and destination MySQL Server table names and attribute names of these tables.
+    TableMap tableMap = new TableMap(); //Creates a new TableMap object. The TableMap objects lets you create a mapping between table names and attribute names withing these tables. This will become a part of the DBMap object we created earlier.
+    tableMap.addAttributeMap(new AttributeMap("name","fullname",AttributeType.STRING)); //Creates a new AttributeMap object that maps an attribute name between these tables. Here, the source table has an attribute called 'name', which is mapped to the attribute called 'fullname' in the destination table. The third parameter, AttributeType.STRING tells what type of attribute is being mapped; for e.g. varchar, char, timestamp, etc. are of type AttributeType.STRING whereas float, int, double etc. are of type AttributeType.NUMERICAL.
+    tableMap.addAttributeMap(new AttributeMap("servertime","servertime",AttributeType.STRING));
   }
 }
 ```

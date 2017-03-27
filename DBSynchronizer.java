@@ -121,6 +121,8 @@ public class DBSynchronizer implements Runnable{
                 
                 lastSyncTimestamp = "0000-00-00 00:00:00";
             }
+            
+            rs.close();
         } 
         
         catch (Exception e) {
@@ -146,7 +148,6 @@ public class DBSynchronizer implements Runnable{
         selectQuery.append(" from ").append(table).append(" where ")
                    .append(timestampAttribute).append(" > ")
                    .append(" '").append(lastSyncTimestamp).append("'");
-        System.out.println(selectQuery.toString());
         return selectQuery.toString();
     }
     
@@ -177,7 +178,6 @@ public class DBSynchronizer implements Runnable{
             }
         }
         updateQuery.append(")");
-        System.out.println(updateQuery.toString());
         return updateQuery.toString();
     }
     
@@ -204,6 +204,8 @@ public class DBSynchronizer implements Runnable{
                         String updateQuery = generateUpdateQuery(serverResultSet, destinationTable, attributeMap);
                         clientStatement.executeUpdate(updateQuery);
                 }
+                
+                serverResultSet.close();
             }
             
             catch(Exception e){

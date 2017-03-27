@@ -400,8 +400,7 @@ public class DBSyncAgent {
     
     /**
      * Disconnects the existing client and server connections safely.
-     * Call this after calling {@link #stopSync()} if a {@link #liveSync()} is 
-     * in progress.
+     * Call this method after calling {@link #stopSync()}.
      */
     public void disconnect(){
         
@@ -409,6 +408,9 @@ public class DBSyncAgent {
             
             clientStatement.close();
             serverStatement.close();
+            
+            clientConnection.close();
+            serverConnection.close();
         }
         
         catch(Exception e){

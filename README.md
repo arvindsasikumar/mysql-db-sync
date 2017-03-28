@@ -48,6 +48,7 @@ public class Test{
                               
     dbSyncAgent.connect(); //Establish connection to server and client databases.
     dbSyncAgent.sync(); //Call this when synchronizing for first time, even if live synchronization is required. If the latter is the case, call the method for live synchronization immediately after this.
+    dbSyncAgent.hold(); //Wait for the sync() method to do finish its job.
     dbSyncAgent.liveSync(); //Activates live sync. Make sure syncInterval() method has been used or the sync interval property was set while building the DBSyncObject. So not use this method if the client server has been idle for a while or is starting for the first time, especially if the server receives a lot of entires within this period. In this case, call the sync() function method, followed by this method.
     
     System.out.println("Enter a command:");

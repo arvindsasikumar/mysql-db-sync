@@ -54,7 +54,7 @@ public class Test{
     Scanner scanner = new Scanner(System.in);
     String s = scanner.next(); //The synchronization happens in a new Thread. This main thread is free to receive commands. Use your standard input to enter the command 'end' to end the synchronization. This will end all synchronization activities safely.
     
-    if(s.equals("end"){
+    if(s.equals("end")){
       dbAgent.stopSync(); //Call this method to stop the synchronization safely.
       dbAgent.disconnect(); //Call this method after the stopSync() method has been called. Do not call this method without calling the stopSync() method.
     }

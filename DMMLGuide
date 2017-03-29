@@ -1,0 +1,14 @@
+DMML has only x tags -
+
+1. <databasemap> : signals the start of the database map
+2. <tablemap> : signals start of the table map
+3. <source> : when enclosed inside <tablemap></tablemap> tags, it refers to the source table and when enclosed inside <attrmap></attrmap> tags, it refers to the source attribute
+4. <dest> : when enclosed inside <tablemap></tablemap> tags, it refers to the destination table and when enclosed inside <attrmap></attrmap> tags, it refers to the destination attribute
+5. <sourcetimestamp> : refers to the source table's timestamp attribute
+6. <desttimestamp> : refers to the source table's timestamp attribute
+7. <attrmap> : signals start of an attribute map; always sits inside a table map
+8. <type> : type of attributes in a nattribute map, can only take two values, STRING and NUMERICAL (case-sensitive)
+
+Make sure to close all tags properly. Also, the tags themselves (both opening and closing separately) have to be written on a new line with the tag information in between them on a line of its own.
+
+For a complete understanding, check the sample.dmml file.

@@ -62,3 +62,10 @@ public class Test{
   }
 }
 ```
+Starting from v2.0, now you can set up database mapping using a custom markup language called the Database Mapping Markup Language (DMML). Once you have a dmml file, to get a DBMap object, simply call:
+
+```java
+DBMap dbMap = DBMap.getDBMapFromFile("dmml_file_path");
+```
+
+DMML file is very easy to generate. For help on generating a .dmml file, check out the DMMLGuide and sample.dmml.
